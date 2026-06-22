@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#BE1E2D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="kVAI">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>kVAI — Electrical Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      background: #f0ece4;
+      color: #2c2c2c;
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100dvh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #BE1E2D;
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header .logo {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    header .header-text { flex: 1; }
+    header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+    header p  { font-size: 12px; color: rgba(255,255,255,.75); }
+    header .das-logo {
+      height: 56px;
+      width: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 4px 10px;
+      flex-shrink: 0;
+    }
+
+    /* ── Page ── */
+    main {
+      padding: 16px;
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: #BE1E2D;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      font-size: 12px;
+      color: #777;
+      margin-top: -4px;
+      margin-bottom: 10px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #e0d8cc;
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+
+    /* ── Form rows ── */
+    .field { margin-bottom: 13px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: #7a6a50;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .input-row {
+      display: flex;
+      gap: 0;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      transition: border-color .15s;
+    }
+    .input-row:focus-within { border-color: #BE1E2D; }
+    .input-row input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 9px 11px;
+      font-size: 15px;
+      background: transparent;
+      color: #2c2c2c;
+      min-width: 0;
+    }
+    .input-row input::placeholder { color: #bbb; }
+    .input-row .unit {
+      padding: 9px 11px;
+      background: #f5f0e8;
+      border-left: 1px solid #ddd;
+      font-size: 13px;
+      font-weight: 600;
+      color: #7a6a50;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .input-row .unit select {
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: #7a6a50;
+      cursor: pointer;
+      outline: none;
+    }
+    .input-row.result-field { background: #f9f6f0; }
+    .input-row.result-field input {
+      background: transparent;
+      color: #BE1E2D;
+      font-weight: 700;
+    }
+
+    /* Full-width select (phase selector) */
+    .select-full {
+      width: 100%;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-size: 15px;
+      color: #2c2c2c;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .select-full:focus { border-color: #BE1E2D; }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: opacity .15s;
+    }
+    .btn:active { opacity: .8; }
+    .btn-primary  { background: #BE1E2D; color: #fff; flex: 2; }
+    .btn-secondary { background: #7a6a50; color: #fff; }
+    .btn-outline  { background: #f5f0e8; color: #7a6a50; border: 1px solid #d0c8b8; }
+
+    /* ── Result copy ── */
+    .result-wrap {
+      display: flex;
+      gap: 0;
+      border: 1.5px solid #f0c8b0;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff8f5;
+    }
+    .result-wrap input {
+      flex: 1; border: none; outline: none;
+      padding: 9px 11px; font-size: 15px;
+      font-weight: 700; color: #BE1E2D;
+      background: transparent;
+    }
+    .result-wrap .unit-label {
+      padding: 9px 11px;
+      background: #fdeee8;
+      border-left: 1px solid #f0c8b0;
+      font-size: 13px; font-weight: 700;
+      color: #BE1E2D;
+      display: flex; align-items: center;
+    }
+    .copy-btn {
+      padding: 9px 11px;
+      background: #f5ede8;
+      border-left: 1px solid #f0c8b0;
+      border: none;
+      cursor: pointer;
+      color: #BE1E2D;
+      font-size: 15px;
+      display: flex; align-items: center;
+    }
+    .copy-btn:active { background: #f0d8d0; }
+
+    /* ── Divider ── */
+    .divider {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      position: relative;
+      margin: 2px 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: #e0d8cc;
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+
+    /* ── Transformer table ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    th {
+      background: #f5f0e8;
+      color: #7a6a50;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 7px 10px;
+      text-align: left;
+      border-bottom: 2px solid #e0d8cc;
+    }
+    td { padding: 8px 10px; border-bottom: 1px solid #f0ece4; color: #2c2c2c; }
+    tr:last-child td { border-bottom: none; }
+    td strong { color: #BE1E2D; }
+    tr:hover td { background: #fdf9f5; }
+
+    /* ── Note box ── */
+    .note {
+      background: #fff8f0;
+      border-left: 3px solid #e8b090;
+      border-radius: 0 6px 6px 0;
+      padding: 9px 12px;
+      font-size: 12px;
+      color: #7a5030;
+      margin-top: 10px;
+    }
+
+    /* ── Machine selector ── */
+    .machine-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .machine-card {
+      background: #fff;
+      border: 2px solid #e0d8cc;
+      border-radius: 10px;
+      padding: 13px 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, transform .1s;
+      position: relative;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .machine-card:active { transform: scale(.97); }
+    .machine-card.selected {
+      border-color: #BE1E2D;
+      background: #fff5f5;
+    }
+    .machine-card.selected-green {
+      border-color: #2e7d32;
+      background: #f5fff5;
+    }
+    .machine-card .mc-check {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      color: transparent;
+      transition: all .15s;
+    }
+    .machine-card.selected .mc-check {
+      background: #BE1E2D;
+      border-color: #BE1E2D;
+      color: #fff;
+    }
+    .machine-card.selected-green .mc-check {
+      background: #2e7d32;
+      border-color: #2e7d32;
+      color: #fff;
+    }
+    .mc-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2c2c2c;
+      margin-bottom: 4px;
+      letter-spacing: .3px;
+      padding-right: 22px;
+    }
+    .mc-volt {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+    .mc-volt.v200 { background: #fdeee8; color: #BE1E2D; }
+    .mc-volt.v380 { background: #e8f5e8; color: #2e7d32; }
+    .mc-amp {
+      font-size: 18px;
+      font-weight: 800;
+      color: #2c2c2c;
+      line-height: 1;
+    }
+    .mc-amp span { font-size: 11px; font-weight: 500; color: #999; }
+
+    /* ── Live result ── */
+    .live-result {
+      background: #fff;
+      border: 2px solid #e0d8cc;
+      border-radius: 10px;
+      overflow: hidden;
+      display: none;
+    }
+    .live-result.show { display: block; }
+    .lr-header {
+      background: #f5f0e8;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #7a6a50;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .lr-body { padding: 14px; }
+    .lr-machines {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .lr-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .lr-tag.red   { background: #fdeee8; color: #BE1E2D; border: 1px solid #f5c0b0; }
+    .lr-tag.green { background: #e8f5e8; color: #2e7d32; border: 1px solid #b8e0b8; }
+
+    .lr-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0ece4;
+      font-size: 13px;
+    }
+    .lr-row:last-child { border-bottom: none; }
+    .lr-row .lr-label { color: #7a6a50; }
+    .lr-row .lr-val {
+      font-weight: 700;
+      font-size: 15px;
+      color: #2c2c2c;
+    }
+
+    .lr-tx-box {
+      margin-top: 12px;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .lr-tx-box.red-box   { background: #fff0f0; border: 2px solid #BE1E2D; }
+    .lr-tx-box.green-box { background: #f0fff0; border: 2px solid #2e7d32; }
+    .lr-tx-label { font-size: 12px; font-weight: 600; color: #999; margin-bottom: 4px; }
+    .lr-tx-size  { font-size: 32px; font-weight: 900; color: #BE1E2D; line-height: 1; }
+    .lr-tx-size.green { color: #2e7d32; }
+    .lr-tx-note  { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+    .lr-direct {
+      background: #f0fff0;
+      border: 2px solid #2e7d32;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #2e7d32;
+    }
+
+    .lr-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      display: flex;
+      background: #fff;
+      border-bottom: 2px solid #e0d8cc;
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 6px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: #999;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      color: #BE1E2D;
+      border-bottom-color: #BE1E2D;
+    }
+
+    /* ── Tab panels ── */
+    .tabs-slider {
+      display: flex;
+      width: 200%;
+      will-change: transform;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-panel {
+      width: 50%;
+      flex-shrink: 0;
+      min-width: 0;
+    }
+
+    /* ── Machine data cards ── */
+    .mdata-card {
+      background: #fff;
+      border: 1px solid #e0d8cc;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .mdata-head {
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #f0ece4;
+    }
+    .mdata-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .mdata-icon.red   { background: #fdeee8; }
+    .mdata-icon.green { background: #e8f5e8; }
+    .mdata-title { font-size: 16px; font-weight: 800; color: #2c2c2c; }
+    .mdata-sub   { font-size: 12px; color: #999; margin-top: 1px; }
+
+    .mdata-body { padding: 0; }
+    .mdata-row {
+      display: flex;
+      padding: 9px 16px;
+      border-bottom: 1px solid #f5f2ee;
+      font-size: 13px;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .mdata-row:last-child { border-bottom: none; }
+    .mdata-key {
+      flex: 0 0 130px;
+      color: #7a6a50;
+      font-weight: 600;
+      font-size: 12px;
+      padding-top: 1px;
+    }
+    .mdata-val {
+      flex: 1;
+      color: #2c2c2c;
+      font-weight: 500;
+    }
+    .mdata-val strong { color: #BE1E2D; }
+    .mdata-val.green  { color: #2e7d32; font-weight: 700; }
+
+    .mdata-section-head {
+      background: #f5f0e8;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #7a6a50;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: #b0a898;
+      padding: 10px 16px 24px;
+    }
+
+    /* ── PIN overlay ── */
+    #pin-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(160deg, #BE1E2D 0%, #9B1623 100%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease;
+    }
+    #pin-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .pin-logo {
+      height: 52px;
+      width: auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 6px 12px;
+      margin-bottom: 22px;
+    }
+    .pin-title {
+      font-size: 30px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+    .pin-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,.65);
+      margin-bottom: 30px;
+    }
+    .pin-dots {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .pin-dots span {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.55);
+      background: transparent;
+      transition: background .15s, border-color .15s;
+    }
+    .pin-dots span.filled {
+      background: #fff;
+      border-color: #fff;
+    }
+    .pin-error {
+      height: 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,.9);
+      font-weight: 600;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+    .pin-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 270px;
+    }
+    .pin-pad button {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.3);
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .1s, transform .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pin-pad button:active {
+      background: rgba(255,255,255,.35);
+      transform: scale(.93);
+    }
+    .pin-pad .pin-empty { pointer-events: none; }
+    @keyframes pin-shake {
+      0%,100% { transform: translateX(0); }
+      15%  { transform: translateX(-9px); }
+      30%  { transform: translateX(9px); }
+      45%  { transform: translateX(-6px); }
+      60%  { transform: translateX(6px); }
+      75%  { transform: translateX(-3px); }
+      90%  { transform: translateX(3px); }
+    }
+    .pin-shake { animation: pin-shake 0.42s ease; }
+  </style>
+</head>
+<body>
+
+<!-- ── PIN overlay ── -->
+<div id="pin-overlay">
+  <div id="pin-screen">
+    <img src="./das-logo.jpg" class="pin-logo" alt="DAS">
+    <div class="pin-title">kVAI</div>
+    <div class="pin-sub">Enter PIN to continue</div>
+    <div class="pin-dots" id="pin-dots">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div id="pin-error" class="pin-error"></div>
+    <div class="pin-pad">
+      <button ontouchstart="" onclick="pinDigit('1')">1</button>
+      <button ontouchstart="" onclick="pinDigit('2')">2</button>
+      <button ontouchstart="" onclick="pinDigit('3')">3</button>
+      <button ontouchstart="" onclick="pinDigit('4')">4</button>
+      <button ontouchstart="" onclick="pinDigit('5')">5</button>
+      <button ontouchstart="" onclick="pinDigit('6')">6</button>
+      <button ontouchstart="" onclick="pinDigit('7')">7</button>
+      <button ontouchstart="" onclick="pinDigit('8')">8</button>
+      <button ontouchstart="" onclick="pinDigit('9')">9</button>
+      <div class="pin-empty"></div>
+      <button ontouchstart="" onclick="pinDigit('0')">0</button>
+      <button ontouchstart="" onclick="pinBack()" style="font-size:18px">⌫</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="14,2 5,14 11.5,14 10,22 19,10 12.5,10 16,2" fill="white"/>
+    </svg>
+  </div>
+  <div class="header-text">
+    <h1>kVAI</h1>
+    <p>Electrical Power Calculator</p>
+  </div>
+  <img src="./das-logo.jpg" class="das-logo" alt="DAS">
+</header>
+
+<!-- ── Tab bar ── -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('calc')">Calculator</button>
+  <button class="tab-btn" onclick="switchTab('machines')">Machines</button>
+</div>
+
+<div style="overflow:hidden">
+<div class="tabs-slider" id="tabs-slider">
+
+<!-- ══ TAB: Calculator ══ -->
+<div id="tab-calc" class="tab-panel">
+<main>
+
+  <!-- ══ MACHINE SELECTOR ══ -->
+  <div>
+    <div class="section-label">Machine Installer</div>
+    <div class="section-sub">Tap to select — transformer size updates instantly</div>
+
+    <div class="machine-grid">
+
+      <button class="machine-card" id="card-mkii" onclick="toggleMachine('mkii')">
+        <div class="mc-check">✓</div>
+        <div class="mc-name">TORIDAS-MKII</div>
+        <div class="mc-volt v200">200V · 3Φ</div><br>
+        <div class="mc-amp">20 <span>A</span></div>
+      </button>
+
+      <button class="machine-card" id="card-mkiii" onclick="toggleMachine('mkiii')">
+        <div class="mc-check">✓</div>
+        <div class="mc-name">TORIDAS-MKIII</div>
+        <div class="mc-volt v200">200V · 3Φ</div><br>
+        <div class="mc-amp">30 <span>A</span></div>
+      </button>
+
+      <button class="machine-card" id="card-yieldas" onclick="toggleMachine('yieldas')">
+        <div class="mc-check">✓</div>
+        <div class="mc-name">YIELDAS</div>
+        <div class="mc-volt v200">200V · 3Φ</div><br>
+        <div class="mc-amp">28 <span>A</span></div>
+      </button>
+
+      <button class="machine-card" id="card-gizzard" onclick="toggleMachine('gizzard')">
+        <div class="mc-check">✓</div>
+        <div class="mc-name">GIZZARD</div>
+        <div class="mc-volt v380">380V · 3Φ</div><br>
+        <div class="mc-amp">4 <span>A</span></div>
+      </button>
+
+    </div>
+
+    <!-- Live result -->
+    <div class="live-result" id="live-result">
+      <div class="lr-header">Installation Plan</div>
+      <div class="lr-body">
+        <div class="lr-machines" id="lr-tags"></div>
+        <div id="lr-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CALCULATOR ══ -->
+  <div>
+    <div class="section-label">Power Calculator</div>
+    <div class="section-sub">Calculate kW, kVA, or Amps for AC motors</div>
+
+    <div class="card">
+
+      <!-- Phase -->
+      <div class="field">
+        <label>Phase type</label>
+        <select class="select-full" id="phase" onchange="onPhaseChange()">
+          <option value="3">3-Phase AC</option>
+          <option value="1">1-Phase AC</option>
+        </select>
+      </div>
+
+      <!-- Voltage -->
+      <div class="field">
+        <label>Voltage (V)</label>
+        <div class="input-row">
+          <input type="number" id="volt" placeholder="e.g. 380" inputmode="decimal">
+          <div class="unit">V</div>
+        </div>
+      </div>
+
+      <!-- Current -->
+      <div class="field">
+        <label>Current (A)</label>
+        <div class="input-row">
+          <input type="number" id="amp" placeholder="e.g. 16.5" inputmode="decimal">
+          <div class="unit">A</div>
+        </div>
+      </div>
+
+      <!-- Power Factor -->
+      <div class="field">
+        <label>Power Factor (PF)</label>
+        <div class="input-row">
+          <input type="number" id="pf" placeholder="0.85" inputmode="decimal" step="0.01" min="0.01" max="1" value="0.85">
+          <div class="unit">0–1</div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="calc()">= Calculate</button>
+        <button class="btn btn-secondary" onclick="resetCalc()">✕ Reset</button>
+      </div>
+
+      <!-- Results -->
+      <div class="field">
+        <label>Apparent Power (kVA)</label>
+        <div class="result-wrap">
+          <input type="text" id="r-kva" readonly placeholder="—">
+          <div class="unit-label">kVA</div>
+          <button class="copy-btn" onclick="copyVal('r-kva')" title="Copy">⧉</button>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:0">
+        <label>Active Power (kW)</label>
+        <div class="result-wrap">
+          <input type="text" id="r-kw" readonly placeholder="—">
+          <div class="unit-label">kW</div>
+          <button class="copy-btn" onclick="copyVal('r-kw')" title="Copy">⧉</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ REFERENCE ══ -->
+  <div>
+    <div class="section-label">Formulas</div>
+
+    <div class="card">
+      <table>
+        <tr><th>Formula</th><th>3-Phase</th><th>1-Phase</th></tr>
+        <tr><td>kVA</td><td>√3 × V × A ÷ 1000</td><td>V × A ÷ 1000</td></tr>
+        <tr><td>kW</td><td>kVA × PF</td><td>kVA × PF</td></tr>
+        <tr><td>Amps</td><td>kW ÷ (√3 × V × PF) × 1000</td><td>kW ÷ (V × PF) × 1000</td></tr>
+      </table>
+    </div>
+  </div>
+
+</main>
+</div><!-- end tab-calc -->
+
+<!-- ══ TAB: Machines ══ -->
+<div id="tab-machines" class="tab-panel">
+<main>
+
+  <!-- ── TORIDAS-MKII ── -->
+  <div class="mdata-card">
+    <div class="mdata-head">
+      <div>
+        <div class="mdata-title">TORIDAS-MKII</div>
+        <div class="mdata-sub">Chicken leg deboner · 200V</div>
+      </div>
+    </div>
+    <div class="mdata-body">
+      <div class="mdata-section-head">Physical</div>
+      <div class="mdata-row"><span class="mdata-key">Dimensions (L×W×H)</span><span class="mdata-val">1,330 × 1,380 × 2,400 mm</span></div>
+      <div class="mdata-row"><span class="mdata-key">Total weight</span><span class="mdata-val">2,300 kg</span></div>
+      <div class="mdata-row"><span class="mdata-key">Noise emission</span><span class="mdata-val">90 dB</span></div>
+      <div class="mdata-section-head">Electrical</div>
+      <div class="mdata-row"><span class="mdata-key">Voltage</span><span class="mdata-val"><strong>200V AC</strong> · 3-Phase · 50/60 Hz</span></div>
+      <div class="mdata-row"><span class="mdata-key">Current / Power</span><span class="mdata-val"><strong>20 A</strong> · 5 kW</span></div>
+      <div class="mdata-row"><span class="mdata-key">Transformer</span><span class="mdata-val"><strong>10 kVA</strong> step-up (200V → 380V)</span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Demo</span><span class="mdata-val">VCT-G 4×<strong>2.5 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Installer</span><span class="mdata-val">VCT-G 4×<strong>4 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-section-head">Utilities</div>
+      <div class="mdata-row"><span class="mdata-key">Pneumatics</span><span class="mdata-val">0.5 MPa · 400 L/min<br><span style="font-size:12px;color:#999">Air filter and air dryer system must be installed</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Water</span><span class="mdata-val">0.15 MPa · 0.5 L/min</span></div>
+    </div>
+  </div>
+
+  <!-- ── TORIDAS-MKIII ── -->
+  <div class="mdata-card">
+    <div class="mdata-head">
+      <div>
+        <div class="mdata-title">TORIDAS-MKIII</div>
+        <div class="mdata-sub">Chicken whole leg deboner · 200V</div>
+      </div>
+    </div>
+    <div class="mdata-body">
+      <div class="mdata-section-head">Physical</div>
+      <div class="mdata-row"><span class="mdata-key">Dimensions (L×W×H)</span><span class="mdata-val">1,330 × 1,380 × 2,924 mm</span></div>
+      <div class="mdata-row"><span class="mdata-key">Total weight</span><span class="mdata-val">2,300 kg</span></div>
+      <div class="mdata-row"><span class="mdata-key">Noise emission</span><span class="mdata-val">90 dB</span></div>
+      <div class="mdata-section-head">Electrical</div>
+      <div class="mdata-row"><span class="mdata-key">Voltage</span><span class="mdata-val"><strong>200V AC</strong> · 3-Phase · 50/60 Hz</span></div>
+      <div class="mdata-row"><span class="mdata-key">Current / Power</span><span class="mdata-val"><strong>30 A</strong> · 6 kW</span></div>
+      <div class="mdata-row"><span class="mdata-key">Transformer</span><span class="mdata-val"><strong>25 kVA</strong> step-up (200V → 380V)</span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Demo</span><span class="mdata-val">VCT-G 4×<strong>2.5 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Installer</span><span class="mdata-val">VCT-G 4×<strong>6 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-section-head">Utilities</div>
+      <div class="mdata-row"><span class="mdata-key">Pneumatics</span><span class="mdata-val">0.5 MPa · 400 L/min<br><span style="font-size:12px;color:#999">Install an air filter and air dryer unit</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Water</span><span class="mdata-val">0.15 MPa · 0.5 L/min</span></div>
+    </div>
+  </div>
+
+  <!-- ── YIELDAS 3000 ── -->
+  <div class="mdata-card">
+    <div class="mdata-head">
+      <div>
+        <div class="mdata-title">YIELDAS 3000</div>
+        <div class="mdata-sub">Chicken front-half processor · 200V</div>
+      </div>
+    </div>
+    <div class="mdata-body">
+      <div class="mdata-section-head">Physical</div>
+      <div class="mdata-row"><span class="mdata-key">Machine size (L×W×H)</span><span class="mdata-val">11,250 × 1,180 × 2,730 mm</span></div>
+      <div class="mdata-row"><span class="mdata-key">Product weight</span><span class="mdata-val">4,500 kg</span></div>
+      <div class="mdata-row"><span class="mdata-key">Noise level</span><span class="mdata-val">< 85 dB(A)</span></div>
+      <div class="mdata-section-head">Electrical</div>
+      <div class="mdata-row"><span class="mdata-key">Voltage</span><span class="mdata-val"><strong>200–220V AC</strong> · 3-Phase · 50/60 Hz<br><span style="font-size:12px;color:#999">+5%, -10% tolerance</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Current / Power</span><span class="mdata-val"><strong>28 A</strong> · 8.4 kW · 10 kVA</span></div>
+      <div class="mdata-row"><span class="mdata-key">Transformer</span><span class="mdata-val"><strong>10 kVA</strong> step-up (200V → 380V)<br><span style="font-size:11px;color:#BE1E2D;font-weight:700">★ Manufacturer specification</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Demo</span><span class="mdata-val">VCT-G 4×<strong>2.5 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Installer</span><span class="mdata-val">VCT-G 4×<strong>6 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-section-head">Utilities</div>
+      <div class="mdata-row"><span class="mdata-key">Compressed air</span><span class="mdata-val">0.6 MPa · 1,000 L/min · Dry air<br><span style="font-size:12px;color:#999">Dew point 5°C at 0.6 MPa · Min. 0.55 MPa during operation</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Water</span><span class="mdata-val">0.3 MPa · 40 L/min<br><span style="font-size:12px;color:#999">For cone cleaning and sprinkling</span></span></div>
+    </div>
+  </div>
+
+  <!-- ── GIZZARD ── -->
+  <div class="mdata-card">
+    <div class="mdata-head">
+      <div>
+        <div class="mdata-title">GIZZARD</div>
+        <div class="mdata-sub">Gizzard splitter + auxiliary skinner · 380V direct</div>
+      </div>
+    </div>
+    <div class="mdata-body">
+      <div class="mdata-section-head">Physical</div>
+      <div class="mdata-row"><span class="mdata-key">Dimensions (L×W×H)</span><span class="mdata-val">3,000 × 750 × 1,800 mm</span></div>
+      <div class="mdata-row"><span class="mdata-key">Product weight</span><span class="mdata-val">≈ 700 kg<br><span style="font-size:12px;color:#999">Gizzard splitter + auxiliary skinner</span></span></div>
+      <div class="mdata-section-head">Electrical</div>
+      <div class="mdata-row"><span class="mdata-key">Voltage</span><span class="mdata-val" style="color:#2e7d32"><strong>380V AC</strong> · 3-Phase · 50/60 Hz<br><span style="font-size:12px;color:#999">+5%, -10% tolerance</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Current / Power</span><span class="mdata-val">3.94 A · 1.35 kW · 1.8 kVA</span></div>
+      <div class="mdata-row"><span class="mdata-key">Power cable</span><span class="mdata-val">≥ 3.5 mm²</span></div>
+      <div class="mdata-row"><span class="mdata-key">Transformer</span><span class="mdata-val" style="color:#2e7d32;font-weight:700">Not required — direct 380V</span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Demo</span><span class="mdata-val">VCT-G 4×<strong>2.5 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Installer</span><span class="mdata-val">VCT-G 4×<strong>4 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-section-head">Utilities</div>
+      <div class="mdata-row"><span class="mdata-key">Water supply</span><span class="mdata-val">0.3 MPa · 20 L/min</span></div>
+    </div>
+  </div>
+
+</main>
+</div><!-- end tab-machines -->
+
+</div><!-- end tabs-slider -->
+</div><!-- end overflow wrapper -->
+
+<footer>kVAI · Industrial Electrical Reference</footer>
+
+<script>
+// ── Tab switching ──
+const TAB_ORDER = ['calc', 'machines'];
+let curIdx = 0;
+const slider = document.getElementById('tabs-slider');
+
+function switchTab(id, animate = true) {
+  const idx = TAB_ORDER.indexOf(id);
+  if (idx < 0) return;
+  curIdx = idx;
+  slider.style.transition = animate
+    ? 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)'
+    : 'none';
+  slider.style.transform = `translateX(${-idx * 50}%)`;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${id}')"]`).classList.add('active');
+  if (animate) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Swipe with follow-finger ──
+let _sx = 0, _sy = 0, _swiping = false, _dir = null;
+
+document.addEventListener('touchstart', e => {
+  _sx = e.touches[0].clientX;
+  _sy = e.touches[0].clientY;
+  _swiping = false;
+  _dir = null;
+}, { passive: true });
+
+document.addEventListener('touchmove', e => {
+  const dx = e.touches[0].clientX - _sx;
+  const dy = e.touches[0].clientY - _sy;
+  if (_dir === null) {
+    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+    _dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+  }
+  if (_dir !== 'h') return;
+  _swiping = true;
+  const base = -curIdx * 50;
+  const pct  = (dx / window.innerWidth) * 100;
+  const clamped = Math.max(Math.min(pct, 50), -50);
+  slider.style.transition = 'none';
+  slider.style.transform  = `translateX(${base + clamped * 0.5}%)`;
+}, { passive: true });
+
+document.addEventListener('touchend', e => {
+  if (!_swiping) return;
+  const dx = e.changedTouches[0].clientX - _sx;
+  if      (dx < -50 && curIdx < TAB_ORDER.length - 1) switchTab(TAB_ORDER[curIdx + 1]);
+  else if (dx >  50 && curIdx > 0)                    switchTab(TAB_ORDER[curIdx - 1]);
+  else                                                 switchTab(TAB_ORDER[curIdx]);
+  _swiping = false;
+}, { passive: true });
+
+// ── Machine data ──
+const MACHINES = {
+  mkii:    { name: 'TORIDAS-MKII',  volt: 200, amp: 20,   phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×4 mm²', sizeDemo: 2.5, sizeInstall: 4 },
+  mkiii:   { name: 'TORIDAS-MKIII', volt: 200, amp: 30,   phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×6 mm²', sizeDemo: 2.5, sizeInstall: 6 },
+  yieldas: { name: 'YIELDAS',       volt: 200, amp: 28,   phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×6 mm²', sizeDemo: 2.5, sizeInstall: 6, txFixed: '10 kVA' },
+  gizzard: { name: 'GIZZARD',       volt: 380, amp: 3.94, phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×4 mm²', sizeDemo: 2.5, sizeInstall: 4 },
+};
+
+const TX_SIZES = [7.5, 10, 25];
+
+function pickTx(kvaNeeded) {
+  for (const s of TX_SIZES) if (kvaNeeded <= s) return s + ' kVA';
+  return '> 25 kVA';
+}
+
+let selected = new Set();
+
+function toggleMachine(id) {
+  const card = document.getElementById('card-' + id);
+  if (selected.has(id)) {
+    selected.delete(id);
+    card.classList.remove('selected', 'selected-green');
+  } else {
+    selected.add(id);
+    const is380 = MACHINES[id].volt === 380;
+    card.classList.add(is380 ? 'selected-green' : 'selected');
+  }
+  updateLive();
+}
+
+function updateLive() {
+  const panel = document.getElementById('live-result');
+  const tags  = document.getElementById('lr-tags');
+  const content = document.getElementById('lr-content');
+
+  if (selected.size === 0) { panel.classList.remove('show'); return; }
+  panel.classList.add('show');
+
+  // Tags
+  tags.innerHTML = [...selected].map(id => {
+    const m = MACHINES[id];
+    const cls = m.volt === 380 ? 'green' : 'red';
+    return `<span class="lr-tag ${cls}">${m.name}</span>`;
+  }).join('');
+
+  // Split by voltage
+  const v200 = [...selected].filter(id => MACHINES[id].volt === 200);
+  const v380 = [...selected].filter(id => MACHINES[id].volt === 380);
+
+  let html = '';
+
+  // 200V machines → need transformer
+  if (v200.length > 0) {
+    const totalA  = v200.reduce((s, id) => s + MACHINES[id].amp, 0);
+    const kvaReal = 1.732 * 200 * totalA / 1000;
+    const kvaNeed = kvaReal * 1.2;
+
+    // Use manufacturer-specified TX if YIELDAS is the only 200V machine selected
+    const onlyYieldas = v200.length === 1 && v200[0] === 'yieldas';
+    const txSize = onlyYieldas ? MACHINES.yieldas.txFixed : pickTx(kvaNeed);
+    const txNote = onlyYieldas
+      ? '200V → 380V · Manufacturer spec'
+      : '200V → 380V · includes 20% safety margin';
+
+    html += `
+      <div class="lr-row">
+        <span class="lr-label">Total current (200V)</span>
+        <span class="lr-val">${totalA} A</span>
+      </div>
+      <div class="lr-row">
+        <span class="lr-label">Actual load</span>
+        <span class="lr-val">${kvaReal.toFixed(2)} kVA</span>
+      </div>
+      <div class="lr-row">
+        <span class="lr-label">Required (+20% margin)</span>
+        <span class="lr-val">${onlyYieldas ? '<span style="color:#999;font-size:12px">— (using mfr spec)</span>' : kvaNeed.toFixed(2) + ' kVA'}</span>
+      </div>`;
+
+    if (v380.length > 0) {
+      // Mixed: show split boxes
+      html += `<div class="lr-split">
+        <div class="lr-tx-box red-box">
+          <div class="lr-tx-label">Step-up Transformer</div>
+          <div class="lr-tx-size">${txSize}</div>
+          <div class="lr-tx-note">${txNote}</div>
+        </div>
+        <div class="lr-tx-box green-box">
+          <div class="lr-tx-label">GIZZARD</div>
+          <div class="lr-tx-size green">Direct</div>
+          <div class="lr-tx-note">380V no TX needed</div>
+        </div>
+      </div>`;
+    } else {
+      html += `<div class="lr-tx-box red-box">
+        <div class="lr-tx-label">Step-up Transformer needed</div>
+        <div class="lr-tx-size">${txSize}</div>
+        <div class="lr-tx-note">${txNote}</div>
+      </div>`;
+    }
+  } else if (v380.length > 0) {
+    html += `<div class="lr-direct">✓ Direct 380V connection<br><span style="font-size:12px;font-weight:400;color:#4a9a4a">No transformer needed</span></div>`;
+  }
+
+  // Wiring info — pick largest cable size among selected machines
+  const maxDemo    = Math.max(...[...selected].map(id => MACHINES[id].sizeDemo));
+  const maxInstall = Math.max(...[...selected].map(id => MACHINES[id].sizeInstall));
+
+  html += `
+    <div style="margin-top:12px;border-top:1px solid #f0ece4;padding-top:10px">
+      <div class="lr-row">
+        <span class="lr-label">Cable type</span>
+        <span class="lr-val" style="font-size:13px">VCT-G · L1+L2+L3+G · No Neutral</span>
+      </div>
+      <div class="lr-row">
+        <span class="lr-label">Demo</span>
+        <span class="lr-val" style="font-size:14px">4×<strong>${maxDemo} mm²</strong></span>
+      </div>
+      <div class="lr-row" style="border-bottom:none">
+        <span class="lr-label">Installer</span>
+        <span class="lr-val" style="font-size:14px;color:#BE1E2D">4×<strong>${maxInstall} mm²</strong></span>
+      </div>
+    </div>`;
+
+  content.innerHTML = html;
+}
+
+// ── Power Calculator ──
+function calc() {
+  const phase = parseInt(document.getElementById('phase').value);
+  const V  = parseFloat(document.getElementById('volt').value);
+  const A  = parseFloat(document.getElementById('amp').value);
+  const PF = parseFloat(document.getElementById('pf').value) || 0.85;
+
+  if (isNaN(V) || isNaN(A)) { alert('Please enter Voltage and Current'); return; }
+
+  const kva = phase === 3 ? 1.732 * V * A / 1000 : V * A / 1000;
+  const kw  = kva * PF;
+
+  document.getElementById('r-kva').value = kva.toFixed(3);
+  document.getElementById('r-kw').value  = kw.toFixed(3);
+}
+
+function resetCalc() {
+  ['volt','amp'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pf').value = '0.85';
+  document.getElementById('r-kva').value = '';
+  document.getElementById('r-kw').value  = '';
+}
+
+function onPhaseChange() {
+  const v = document.getElementById('volt');
+  v.placeholder = document.getElementById('phase').value === '3' ? 'e.g. 380' : 'e.g. 220';
+}
+
+function copyVal(id) {
+  const v = document.getElementById(id).value;
+  if (!v) return;
+  navigator.clipboard.writeText(v).catch(() => {});
+}
+
+// ── Transformer ──
+let mCount = 0;
+function addMachine() {
+  mCount++;
+  const div = document.createElement('div');
+  div.className = 'field';
+  div.id = 'mf' + mCount;
+  div.innerHTML = `
+    <label>Machine ${mCount} — Current (A at 200V)</label>
+    <div style="display:flex;gap:8px">
+      <div class="input-row" style="flex:1">
+        <input type="number" id="ma${mCount}" placeholder="e.g. 16.5" inputmode="decimal">
+        <div class="unit">A</div>
+      </div>
+      <button onclick="document.getElementById('mf${mCount}').remove()"
+        style="padding:0 12px;background:#f5f0e8;border:1.5px solid #d0c8b8;border-radius:6px;color:#aaa;cursor:pointer;font-size:16px">✕</button>
+    </div>`;
+  document.getElementById('machine-list').appendChild(div);
+}
+
+function calcTx() {
+  const inputs = document.querySelectorAll('[id^="ma"]');
+  let total = 0;
+  let allValid = true;
+  inputs.forEach(inp => {
+    const v = parseFloat(inp.value);
+    if (isNaN(v) || v <= 0) { allValid = false; return; }
+    total += v;
+  });
+  if (!allValid || inputs.length === 0) { alert('Please enter current for all machines'); return; }
+
+  const kvaActual = 1.732 * 200 * total / 1000;
+  const kvaMargin = kvaActual * 1.2;
+  const rec = kvaMargin <= 6.25 ? '7.5 kVA'
+            : kvaMargin <= 8.33 ? '10 kVA'
+            : kvaMargin <= 20.83 ? '25 kVA'
+            : '> 25 kVA — consult engineer';
+
+  document.getElementById('r-total-a').value    = total.toFixed(1);
+  document.getElementById('r-kva-actual').value = kvaActual.toFixed(3);
+  document.getElementById('r-kva-margin').value = kvaMargin.toFixed(3);
+  document.getElementById('r-tx-rec').value     = rec;
+  document.getElementById('tx-result').style.display = 'block';
+}
+
+function resetTx() {
+  document.getElementById('machine-list').innerHTML = '';
+  document.getElementById('tx-result').style.display = 'none';
+  mCount = 0;
+  addMachine();
+}
+
+// ── Service Worker ──
+if ('serviceWorker' in navigator)
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+
+// ── PIN Protection ──
+const PIN_HASH = '0dc04457e6cb220d5f06a2299c25a306b6a533664d3248ceb83b8d23208ee30d';
+let pinEntry = '';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function pinDigit(d) {
+  if (pinEntry.length >= 6) return;
+  pinEntry += d;
+  updatePinDots();
+  if (pinEntry.length === 6) setTimeout(checkPin, 120);
+}
+
+function pinBack() {
+  pinEntry = pinEntry.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots() {
+  document.querySelectorAll('#pin-dots span').forEach((s, i) => {
+    s.classList.toggle('filled', i < pinEntry.length);
+  });
+}
+
+async function checkPin() {
+  const hash = await sha256(pinEntry);
+  if (hash === PIN_HASH) {
+    sessionStorage.setItem('kvai_auth', '1');
+    const overlay = document.getElementById('pin-overlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+  } else {
+    const dots = document.getElementById('pin-dots');
+    dots.classList.add('pin-shake');
+    dots.addEventListener('animationend', () => dots.classList.remove('pin-shake'), { once: true });
+    document.getElementById('pin-error').textContent = 'Incorrect PIN — try again';
+    pinEntry = '';
+    setTimeout(() => {
+      updatePinDots();
+      document.getElementById('pin-error').textContent = '';
+    }, 900);
+  }
+}
+
+// Show PIN screen unless already authenticated this session
+if (sessionStorage.getItem('kvai_auth') === '1') {
+  document.getElementById('pin-overlay').style.display = 'none';
+}
+</script>
+</body>
+</html>
