@@ -1,4 +1,4 @@
-const CACHE = 'elec-guide-v3';
+const CACHE = 'elec-guide-v4';
 const FILES = ['./index.html', './manifest.json', './das-logo.jpg'];
 
 self.addEventListener('install', e => {
