@@ -19,7 +19,10 @@
       color: #2c2c2c;
       font-size: 15px;
       line-height: 1.5;
-      min-height: 100dvh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     /* ── Header ── */
@@ -458,11 +461,15 @@
       width: 200%;
       will-change: transform;
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 100%;
     }
     .tab-panel {
       width: 50%;
       flex-shrink: 0;
       min-width: 0;
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* ── Machine data cards ── */
@@ -683,7 +690,7 @@
   <button class="tab-btn" onclick="switchTab('machines')">Machines</button>
 </div>
 
-<div style="overflow:hidden">
+<div style="flex:1;overflow:hidden;min-height:0">
 <div class="tabs-slider" id="tabs-slider">
 
 <!-- ══ TAB: Calculator ══ -->
@@ -952,7 +959,7 @@ function switchTab(id, animate = true) {
   slider.style.transform = `translateX(${-idx * 50}%)`;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[onclick="switchTab('${id}')"]`).classList.add('active');
-  if (animate) window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (animate) document.getElementById('tab-' + id).scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ── Swipe with follow-finger ──
