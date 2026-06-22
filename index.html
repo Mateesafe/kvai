@@ -976,7 +976,9 @@ document.addEventListener('touchmove', e => {
   _swiping = true;
   const base = -curIdx * 50;
   const pct  = (dx / window.innerWidth) * 100;
-  const clamped = Math.max(Math.min(pct, 50), -50);
+  const maxPct = curIdx <= 0 ? 0 : 50;
+  const minPct = curIdx >= TAB_ORDER.length - 1 ? 0 : -50;
+  const clamped = Math.max(Math.min(pct, maxPct), minPct);
   slider.style.transition = 'none';
   slider.style.transform  = `translateX(${base + clamped * 0.5}%)`;
 }, { passive: true });
