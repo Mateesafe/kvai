@@ -548,133 +548,10 @@
       padding: 10px 16px 24px;
     }
 
-    /* ── PIN overlay ── */
-    #pin-overlay {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(160deg, #BE1E2D 0%, #9B1623 100%);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.4s ease;
-    }
-    #pin-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 32px 24px;
-      width: 100%;
-      max-width: 320px;
-    }
-    .pin-logo {
-      height: 52px;
-      width: auto;
-      background: #fff;
-      border-radius: 10px;
-      padding: 6px 12px;
-      margin-bottom: 22px;
-    }
-    .pin-title {
-      font-size: 30px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 3px;
-      margin-bottom: 4px;
-    }
-    .pin-sub {
-      font-size: 14px;
-      color: rgba(255,255,255,.65);
-      margin-bottom: 30px;
-    }
-    .pin-dots {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 10px;
-    }
-    .pin-dots span {
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.55);
-      background: transparent;
-      transition: background .15s, border-color .15s;
-    }
-    .pin-dots span.filled {
-      background: #fff;
-      border-color: #fff;
-    }
-    .pin-error {
-      height: 20px;
-      font-size: 13px;
-      color: rgba(255,255,255,.9);
-      font-weight: 600;
-      margin-bottom: 22px;
-      text-align: center;
-    }
-    .pin-pad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      width: 100%;
-      max-width: 270px;
-    }
-    .pin-pad button {
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.3);
-      background: rgba(255,255,255,.15);
-      color: #fff;
-      font-size: 22px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .1s, transform .1s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .pin-pad button:active {
-      background: rgba(255,255,255,.35);
-      transform: scale(.93);
-    }
-    .pin-pad .pin-empty { pointer-events: none; }
-    @keyframes pin-shake {
-      0%,100% { transform: translateX(0); }
-      15%  { transform: translateX(-9px); }
-      30%  { transform: translateX(9px); }
-      45%  { transform: translateX(-6px); }
-      60%  { transform: translateX(6px); }
-      75%  { transform: translateX(-3px); }
-      90%  { transform: translateX(3px); }
-    }
-    .pin-shake { animation: pin-shake 0.42s ease; }
   </style>
 </head>
 <body>
 
-<!-- ── PIN overlay ── -->
-<div id="pin-overlay">
-  <div id="pin-screen">
-    <img src="./das-logo.jpg" class="pin-logo" alt="DAS">
-    <div class="pin-title">kVAI</div>
-    <div class="pin-sub">Enter PIN to continue</div>
-    <div class="pin-dots" id="pin-dots">
-      <span></span><span></span><span></span><span></span><span></span><span></span>
-    </div>
-    <div id="pin-error" class="pin-error"></div>
-    <div class="pin-pad">
-      <button ontouchstart="" onclick="pinDigit('1')">1</button>
-      <button ontouchstart="" onclick="pinDigit('2')">2</button>
-      <button ontouchstart="" onclick="pinDigit('3')">3</button>
-      <button ontouchstart="" onclick="pinDigit('4')">4</button>
-      <button ontouchstart="" onclick="pinDigit('5')">5</button>
-      <button ontouchstart="" onclick="pinDigit('6')">6</button>
-      <button ontouchstart="" onclick="pinDigit('7')">7</button>
-      <button ontouchstart="" onclick="pinDigit('8')">8</button>
-      <button ontouchstart="" onclick="pinDigit('9')">9</button>
-      <div class="pin-empty"></div>
-      <button ontouchstart="" onclick="pinDigit('0')">0</button>
-      <button ontouchstart="" onclick="pinBack()" style="font-size:18px">⌫</button>
-    </div>
-  </div>
-</div>
 
 <header>
   <div class="logo">
@@ -931,7 +808,6 @@
       <div class="mdata-section-head">Electrical</div>
       <div class="mdata-row"><span class="mdata-key">Voltage</span><span class="mdata-val" style="color:#2e7d32"><strong>380V AC</strong> · 3-Phase · 50/60 Hz<br><span style="font-size:12px;color:#999">+5%, -10% tolerance</span></span></div>
       <div class="mdata-row"><span class="mdata-key">Current / Power</span><span class="mdata-val">3.94 A · 1.35 kW · 1.8 kVA</span></div>
-      <div class="mdata-row"><span class="mdata-key">Power cable</span><span class="mdata-val">≥ 3.5 mm²</span></div>
       <div class="mdata-row"><span class="mdata-key">Transformer</span><span class="mdata-val" style="color:#2e7d32;font-weight:700">Not required — direct 380V</span></div>
       <div class="mdata-row"><span class="mdata-key">Wiring · Demo</span><span class="mdata-val">VCT-G 4×<strong>2.5 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
       <div class="mdata-row"><span class="mdata-key">Wiring · Installer</span><span class="mdata-val">VCT-G 4×<strong>4 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
@@ -964,7 +840,7 @@ function switchTab(id, animate = true) {
   slider.style.transform = `translateX(${-idx * 50}%)`;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[onclick="switchTab('${id}')"]`).classList.add('active');
-  if (animate) document.getElementById('tab-' + id).scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('tab-' + id).scrollTop = 0;
 }
 
 // ── Swipe with follow-finger ──
@@ -1220,58 +1096,6 @@ function resetTx() {
 if ('serviceWorker' in navigator)
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 
-// ── PIN Protection ──
-const PIN_HASH = '0dc04457e6cb220d5f06a2299c25a306b6a533664d3248ceb83b8d23208ee30d';
-let pinEntry = '';
-
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function pinDigit(d) {
-  if (pinEntry.length >= 6) return;
-  pinEntry += d;
-  updatePinDots();
-  if (pinEntry.length === 6) setTimeout(checkPin, 120);
-}
-
-function pinBack() {
-  pinEntry = pinEntry.slice(0, -1);
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function updatePinDots() {
-  document.querySelectorAll('#pin-dots span').forEach((s, i) => {
-    s.classList.toggle('filled', i < pinEntry.length);
-  });
-}
-
-async function checkPin() {
-  const hash = await sha256(pinEntry);
-  if (hash === PIN_HASH) {
-    sessionStorage.setItem('kvai_auth', '1');
-    const overlay = document.getElementById('pin-overlay');
-    overlay.style.opacity = '0';
-    setTimeout(() => { overlay.style.display = 'none'; }, 400);
-  } else {
-    const dots = document.getElementById('pin-dots');
-    dots.classList.add('pin-shake');
-    dots.addEventListener('animationend', () => dots.classList.remove('pin-shake'), { once: true });
-    document.getElementById('pin-error').textContent = 'Incorrect PIN — try again';
-    pinEntry = '';
-    setTimeout(() => {
-      updatePinDots();
-      document.getElementById('pin-error').textContent = '';
-    }, 900);
-  }
-}
-
-// Show PIN screen unless already authenticated this session
-if (sessionStorage.getItem('kvai_auth') === '1') {
-  document.getElementById('pin-overlay').style.display = 'none';
-}
 </script>
 </body>
 </html>
