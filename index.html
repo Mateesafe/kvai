@@ -614,6 +614,13 @@
         <div class="mc-amp">4 <span>A</span></div>
       </button>
 
+      <button class="machine-card" id="card-neckmeat" onclick="toggleMachine('neckmeat')">
+        <div class="mc-check">✓</div>
+        <div class="mc-name">NECK MEAT REMOVER</div>
+        <div class="mc-volt v200">200V · 3Φ</div><br>
+        <div class="mc-amp">10.2 <span>A</span></div>
+      </button>
+
     </div>
 
     <!-- Live result -->
@@ -816,6 +823,29 @@
     </div>
   </div>
 
+  <!-- ── NECK MEAT REMOVER ── -->
+  <div class="mdata-card">
+    <div class="mdata-head">
+      <div>
+        <div class="mdata-title">NECK MEAT REMOVER</div>
+        <div class="mdata-sub">Neck meat remover · 200V</div>
+      </div>
+    </div>
+    <div class="mdata-body">
+      <div class="mdata-section-head">Physical</div>
+      <div class="mdata-row"><span class="mdata-key">Total weight</span><span class="mdata-val">520 kg</span></div>
+      <div class="mdata-section-head">Electrical</div>
+      <div class="mdata-row"><span class="mdata-key">Voltage</span><span class="mdata-val"><strong>200V AC</strong> · 3-Phase · 50/60 Hz</span></div>
+      <div class="mdata-row"><span class="mdata-key">Current / Power</span><span class="mdata-val"><strong>10.2 A</strong> · 3 kW · 3.53 kVA</span></div>
+      <div class="mdata-row"><span class="mdata-key">Transformer</span><span class="mdata-val"><strong>7.5 kVA</strong> step-up (200V → 380V)</span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Demo</span><span class="mdata-val">VCT-G 4×<strong>2.5 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Wiring · Installer</span><span class="mdata-val">VCT-G 4×<strong>4 mm²</strong><br><span style="font-size:12px;color:#999">L1 + L2 + L3 + G · No Neutral</span></span></div>
+      <div class="mdata-section-head">Utilities</div>
+      <div class="mdata-row"><span class="mdata-key">Water</span><span class="mdata-val">0.15 MPa · 0.5 L/min<br><span style="font-size:12px;color:#999">Auxiliary washing: additional 0.6 L/min warm water</span></span></div>
+      <div class="mdata-row"><span class="mdata-key">Compressed air</span><span class="mdata-val">0.6 MPa · 60 L/min</span></div>
+    </div>
+  </div>
+
 </main>
 </div><!-- end tab-machines -->
 
@@ -885,7 +915,8 @@ const MACHINES = {
   mkii:    { name: 'TORIDAS-MKII',  volt: 200, amp: 20,   phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×4 mm²', sizeDemo: 2.5, sizeInstall: 4 },
   mkiii:   { name: 'TORIDAS-MKIII', volt: 200, amp: 30,   phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×6 mm²', sizeDemo: 2.5, sizeInstall: 6 },
   yieldas: { name: 'YIELDAS',       volt: 200, amp: 28,   phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×6 mm²', sizeDemo: 2.5, sizeInstall: 6, txFixed: '10 kVA' },
-  gizzard: { name: 'GIZZARD',       volt: 380, amp: 3.94, phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×4 mm²', sizeDemo: 2.5, sizeInstall: 4 },
+  gizzard:  { name: 'GIZZARD',            volt: 380, amp: 3.94, phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×4 mm²', sizeDemo: 2.5, sizeInstall: 4 },
+  neckmeat: { name: 'NECK MEAT REMOVER', volt: 200, amp: 10.2, phase: 3, cableDemo: 'VCT-G 4×2.5 mm²', cableInstall: 'VCT-G 4×4 mm²', sizeDemo: 2.5, sizeInstall: 4 },
 };
 
 const TX_SIZES = [7.5, 10, 25];
