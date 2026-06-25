@@ -1,4 +1,4 @@
-const CACHE = 'elec-guide-v5';
+const CACHE = 'elec-guide-v6';
 const FILES = ['./index.html', './manifest.json', './das-logo.jpg'];
 
 self.addEventListener('install', e => {
@@ -18,11 +18,16 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
 
-  // Navigation requests (opening the app) → serve index.html from cache directly
-  // This prevents Safari from seeing a redirect response
+  // Navigation requests → network first, fallback to cache when offline
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      caches.match('./index.html').then(cached => cached || fetch(e.request))
+      fetch(e.request)
+        .then(res => {
+          if (res && res.status === 200)
+            caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+          return res;
+        })
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
